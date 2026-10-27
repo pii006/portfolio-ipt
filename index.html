@@ -37,7 +37,6 @@ body{
     radial-gradient(900px 420px at -5% 10%, color-mix(in srgb, var(--bear) 10%, transparent), transparent 55%),
     var(--bg);
 }
-/* subtle candlestick grid texture on body */
 body::before{
   content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.5;
   background-image:
@@ -123,7 +122,6 @@ th{color:var(--sub); font-weight:800; font-size:10.5px; text-transform:uppercase
 .actions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
 details summary{cursor:pointer; font-size:12.5px; color:var(--sub); font-weight:700;}
 
-/* leaderboard */
 .lb-row{display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; margin-bottom:8px; background:var(--surface2); border:1px solid var(--border); transition:transform .12s ease;}
 .lb-row:hover{transform:translateX(2px);}
 .lb-row.r1{background:linear-gradient(90deg, color-mix(in srgb, var(--gold) 16%, var(--surface2)), var(--surface2)); border-color:color-mix(in srgb, var(--gold) 50%, var(--border));}
@@ -203,13 +201,14 @@ details summary{cursor:pointer; font-size:12.5px; color:var(--sub); font-weight:
       </div>
       <div class="status" id="submitStatus"></div>
     </div>
+  </div>
 
   <!-- ===== LEADERBOARD VIEW ===== -->
   <div id="view-board" style="display:none">
     <div class="card">
       <h2>🏆 Leaderboard P&amp;L Antar Kelompok</h2>
       <p class="desc">
-        Nilai P&amp;L = (N − peringkat) ÷ (N − 1) × 100, berdasarkan pertumbuhan Total Asset dari Minggu 1 ke minggu terbaru yang sudah diupload tiap kelompok. Update otomatis tiap ada upload baru.
+        Nilai P&amp;L = (N − peringkat) ÷ (N − 1) × 100, berdasarkan pertumbuhan Total Asset dari modal awal Rp5.000.000 ke minggu terbaru yang sudah diupload tiap kelompok. Update otomatis tiap ada upload baru.
       </p>
       <div class="refresh-indicator" style="margin-bottom:12px;"><span class="dot"></span><span id="refreshLabel">Live — menyesuaikan otomatis</span></div>
       <div id="boardList"><p class="footer-note">Memuat data…</p></div>
@@ -232,9 +231,10 @@ details summary{cursor:pointer; font-size:12.5px; color:var(--sub); font-weight:
 </div>
 
 <script>
-// ====== KONFIGURASI (isi sebelum upload ke GitHub) ======
-const SHEET_URL_DEFAULT = "https://script.google.com/macros/s/AKfycbwsF2BoxaCo5MaqN3tD5Rw32lww_DIOmRq8seaxJjmJT0TzamUQbMthZtXnp0pbz90X_A/exec";
-let SHEET_URL = localStorage.getItem("pf_sheet_url") || SHEET_URL_DEFAULT;
+// ====== KONFIGURASI ======
+// Diisi langsung di sini (hardcoded) karena Setup UI sudah dihapus dari halaman.
+// Edit baris di bawah ini manual kalau ganti Apps Script.
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbwsF2BoxaCo5MaqN3tD5Rw32lww_DIOmRq8seaxJjmJT0TzamUQbMthZtXnp0pbz90X_A/exec";
 const MODAL_AWAL = 5000000; // basis perhitungan % P&L leaderboard (Rp)
 // ===========================================================
 
@@ -389,7 +389,7 @@ document.getElementById("cancelBtn").addEventListener("click", ()=>{
 document.getElementById("submitBtn").addEventListener("click", ()=>{
   if(!parsedData) return;
   if(!SHEET_URL){
-    setStatus("submitStatus", "URL Google Apps Script belum di-setup. Buka bagian ⚙️ Setup di bawah.", "err");
+    setStatus("submitStatus", "URL Google Apps Script belum di-setup di kode.", "err");
     return;
   }
   const payload = Object.assign({}, parsedData, {
@@ -447,7 +447,7 @@ function loadHistory(clientId){
 // ---- Leaderboard ----
 function loadBoard(){
   const box = document.getElementById("boardList");
-  if(!SHEET_URL){ box.innerHTML = `<p class="footer-note">URL Apps Script belum di-setup (buka tab Upload → ⚙️ Setup).</p>`; return; }
+  if(!SHEET_URL){ box.innerHTML = `<p class="footer-note">URL Apps Script belum di-setup di kode.</p>`; return; }
   fetch(SHEET_URL).then(r=>r.json()).then(res=>{
     if(!res.ok || !res.rows || !res.rows.length){
       box.innerHTML = `<p class="footer-note">Belum ada data yang diupload.</p>`;
@@ -526,15 +526,6 @@ function startPolling(){
   pollTimer = setInterval(loadBoard, 15000);
 }
 function stopPolling(){ if(pollTimer) clearInterval(pollTimer); }
-
-// ---- Setup URL ----
-document.getElementById("sheetUrlInput").value = SHEET_URL;
-document.getElementById("saveUrlBtn").addEventListener("click", ()=>{
-  const v = document.getElementById("sheetUrlInput").value.trim();
-  SHEET_URL = v;
-  localStorage.setItem("pf_sheet_url", v);
-  alert("URL disimpan di browser ini.");
-});
 </script>
 </body>
 </html>
