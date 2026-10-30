@@ -6,140 +6,88 @@
 <title>Portfolio IDX Mobile</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{
-  --bg:#0b0f0d; --surface:#111613; --surface2:#171d19; --text:#eef1ee; --sub:#8b968e; --border:#232b26;
-  --bull:#22c55e; --bull-soft:#16331f; --bear:#ef4444; --bear-soft:#3a1616;
-  --gold:#eab308; --silver:#9ca3af; --bronze:#c2793f;
-  --shadow:0 1px 2px rgba(0,0,0,.3), 0 14px 30px -16px rgba(0,0,0,.7);
-  --radius:16px; color-scheme: dark;
-}
-@media (prefers-color-scheme: light){
-  :root:not([data-theme="dark"]){
-    --bg:#f4f6f3; --surface:#ffffff; --surface2:#f0f3ef; --text:#10140f; --sub:#6b756e; --border:#dfe6e1;
-    --bull:#16a34a; --bull-soft:#dcfce7; --bear:#dc2626; --bear-soft:#fee2e2;
-    --shadow:0 1px 2px rgba(10,20,10,.05), 0 10px 26px -14px rgba(10,20,10,.16);
-    color-scheme: light;
-  }
-}
-:root[data-theme="light"]{
-  --bg:#f4f6f3; --surface:#ffffff; --surface2:#f0f3ef; --text:#10140f; --sub:#6b756e; --border:#dfe6e1;
-  --bull:#16a34a; --bull-soft:#dcfce7; --bear:#dc2626; --bear-soft:#fee2e2;
-  --shadow:0 1px 2px rgba(10,20,10,.05), 0 10px 26px -14px rgba(10,20,10,.16);
-  color-scheme: light;
-}
+:root{--bg:#0b0f0d;--surface:#111613;--surface2:#171d19;--text:#eef1ee;--sub:#8b968e;--border:#232b26;--bull:#22c55e;--bull-soft:#16331f;--bear:#ef4444;--bear-soft:#3a1616;--gold:#eab308;--silver:#9ca3af;--bronze:#c2793f;--shadow:0 1px 2px rgba(0,0,0,.3),0 14px 30px -16px rgba(0,0,0,.7);--radius:16px;color-scheme:dark}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f4f6f3;--surface:#fff;--surface2:#f0f3ef;--text:#10140f;--sub:#6b756e;--border:#dfe6e1;--bull:#16a34a;--bull-soft:#dcfce7;--bear:#dc2626;--bear-soft:#fee2e2;--shadow:0 1px 2px rgba(10,20,10,.05),0 10px 26px -14px rgba(10,20,10,.16);color-scheme:light}}
+:root[data-theme="light"]{--bg:#f4f6f3;--surface:#fff;--surface2:#f0f3ef;--text:#10140f;--sub:#6b756e;--border:#dfe6e1;--bull:#16a34a;--bull-soft:#dcfce7;--bear:#dc2626;--bear-soft:#fee2e2;--shadow:0 1px 2px rgba(10,20,10,.05),0 10px 26px -14px rgba(10,20,10,.16);color-scheme:light}
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{
-  margin:0; color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-  background:
-    radial-gradient(1100px 480px at 85% -12%, color-mix(in srgb, var(--bull) 14%, transparent), transparent 60%),
-    radial-gradient(900px 420px at -5% 10%, color-mix(in srgb, var(--bear) 10%, transparent), transparent 55%),
-    var(--bg);
-}
-body::before{
-  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none; opacity:.5;
-  background-image:
-    linear-gradient(color-mix(in srgb, var(--border) 60%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--border) 60%, transparent) 1px, transparent 1px);
-  background-size:34px 34px;
-  mask-image:linear-gradient(to bottom, black, transparent 70%);
-}
-body::after{
-  content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:10;
-  background:color-mix(in srgb, var(--surface) 90%, transparent);
-}
-header{
-  position:sticky; top:0; z-index:10; background:color-mix(in srgb, var(--surface) 90%, transparent);
-  backdrop-filter:blur(10px); border-bottom:1px solid var(--border);
-  padding:14px 18px; padding-top:calc(14px + env(safe-area-inset-top,0px));
-}
-.hrow{max-width:900px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:12px;}
-header h1{margin:0 0 2px; font-size:17px; font-weight:800; display:flex; align-items:center; gap:8px; letter-spacing:-.2px;}
-header h1 .bull{color:var(--bull)} header h1 .bear{color:var(--bear)}
-header p{margin:0; font-size:12px; color:var(--sub)}
-.navtabs{display:flex; gap:6px;}
-.navtab{
-  padding:8px 14px; border-radius:999px; border:1px solid var(--border); background:var(--surface2);
-  color:var(--sub); font-size:12.5px; font-weight:700; cursor:pointer; transition:all .15s ease;
-}
-.navtab:hover{color:var(--text); border-color:color-mix(in srgb, var(--bull) 50%, var(--border));}
-.navtab.active{background:linear-gradient(135deg, var(--bull), color-mix(in srgb, var(--bull) 70%, var(--bear))); color:#06140a; border-color:transparent;}
-.wrap{max-width:900px; margin:0 auto; padding:20px 18px;}
-.card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:16px; box-shadow:var(--shadow); animation:fadein .25s ease;}
-@keyframes fadein{ from{opacity:0; transform:translateY(5px);} to{opacity:1; transform:none;} }
-.card h2{font-size:15.5px; margin:0 0 4px; font-weight:800; display:flex; align-items:center; gap:7px;}
-.card .desc{font-size:12.5px; color:var(--sub); margin:0 0 14px; line-height:1.6;}
-label{font-size:12px; color:var(--sub); font-weight:700; display:block; margin-bottom:6px;}
-input[type=text]{
-  background:var(--surface2); border:1px solid var(--border); color:var(--text);
-  border-radius:9px; padding:10px 12px; font-size:13.5px; width:100%;
-}
-input[type=text]:focus{outline:none; border-color:var(--bull); box-shadow:0 0 0 3px color-mix(in srgb, var(--bull) 20%, transparent);}
-.field{margin-bottom:14px;}
-.weekpick{display:flex; gap:8px; margin-bottom:14px;}
-.weekbtn{
-  flex:1; padding:12px 8px; border-radius:11px; border:1.5px solid var(--border); background:var(--surface2);
-  color:var(--text); font-size:13px; font-weight:800; cursor:pointer; text-align:center; transition:all .15s ease;
-}
-.weekbtn:hover{border-color:color-mix(in srgb, var(--bull) 60%, var(--border));}
-.weekbtn.active{
-  background:linear-gradient(135deg, color-mix(in srgb, var(--bull) 85%, black), var(--bull));
-  border-color:var(--bull); color:#06140a; box-shadow:0 6px 16px -6px color-mix(in srgb, var(--bull) 70%, transparent);
-}
-.dropzone{
-  border:2px dashed var(--border); border-radius:13px; padding:30px 16px; text-align:center;
-  cursor:pointer; transition:all .15s ease; background:var(--surface2);
-}
-.dropzone:hover, .dropzone.drag{border-color:var(--bull); background:color-mix(in srgb, var(--bull) 8%, var(--surface2));}
-.dropzone .big{font-size:30px; margin-bottom:6px;}
-.dropzone .sub{font-size:12px; color:var(--sub); margin-top:4px;}
-#fileInput{display:none;}
-.btn{
-  background:linear-gradient(135deg, var(--bull), color-mix(in srgb, var(--bull) 65%, black)); color:#06140a;
-  border:none; border-radius:10px; padding:11px 20px; font-size:13.5px; font-weight:800; cursor:pointer;
-  transition:transform .12s ease, opacity .15s; box-shadow:0 8px 18px -8px color-mix(in srgb, var(--bull) 70%, transparent);
-}
-.btn:hover{transform:translateY(-1px);}
-.btn:disabled{opacity:.5; cursor:not-allowed; transform:none; box-shadow:none;}
-.btn.secondary{background:var(--surface2); color:var(--text); border:1px solid var(--border); box-shadow:none;}
-table{width:100%; border-collapse:collapse; font-size:12.5px;}
-th,td{padding:9px 10px; text-align:left; border-bottom:1px solid var(--border);}
-th{color:var(--sub); font-weight:800; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em;}
-.kv{display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; font-size:13.5px; margin:12px 0;}
-.kv div b{display:block; font-size:11px; color:var(--sub); font-weight:700;}
-.bull-txt{color:var(--bull); font-weight:800;} .bear-txt{color:var(--bear); font-weight:800;}
-.status{font-size:12.5px; margin-top:10px; padding:10px 13px; border-radius:9px; display:none;}
-.status.show{display:block;}
-.status.ok{background:var(--bull-soft); color:var(--bull);}
-.status.err{background:var(--bear-soft); color:var(--bear);}
-.status.loading{background:var(--surface2); color:var(--sub);}
-.hist-row{display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:12.5px;}
-.hist-row:last-child{border-bottom:none;}
-.hist-row .t{color:var(--sub); font-size:11.5px;}
-.scrollx{overflow-x:auto;}
-.footer-note{font-size:11.5px; color:var(--sub); margin-top:10px; line-height:1.6;}
-.actions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
-details summary{cursor:pointer; font-size:12.5px; color:var(--sub); font-weight:700;}
-
-.lb-row{display:flex; align-items:center; gap:12px; padding:12px; border-radius:12px; margin-bottom:8px; background:var(--surface2); border:1px solid var(--border); transition:transform .12s ease;}
-.lb-row:hover{transform:translateX(2px);}
-.lb-row.r1{background:linear-gradient(90deg, color-mix(in srgb, var(--gold) 16%, var(--surface2)), var(--surface2)); border-color:color-mix(in srgb, var(--gold) 50%, var(--border));}
-.lb-row.r2{background:linear-gradient(90deg, color-mix(in srgb, var(--silver) 14%, var(--surface2)), var(--surface2));}
-.lb-row.r3{background:linear-gradient(90deg, color-mix(in srgb, var(--bronze) 16%, var(--surface2)), var(--surface2));}
-.lb-rank{width:34px; height:34px; border-radius:50%; background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:13px; flex-shrink:0;}
-.lb-rank.medal{font-size:18px; background:transparent; border:none;}
-.lb-main{flex:1; min-width:0;}
-.lb-name{font-weight:800; font-size:13.5px;}
-.lb-weeks{font-size:11px; color:var(--sub); margin-top:2px; display:flex; gap:10px; flex-wrap:wrap;}
-.lb-pct{font-weight:800; font-size:15px; text-align:right; min-width:72px;}
-.lb-score{font-size:10.5px; color:var(--sub); text-align:right;}
-.sparkbar{display:flex; gap:3px; align-items:flex-end; height:22px; margin-top:4px;}
-.sparkbar .bar{width:6px; border-radius:2px; background:var(--border);}
-.sparkbar .bar.filled{background:var(--bull);}
-.refresh-indicator{font-size:11px; color:var(--sub); display:flex; align-items:center; gap:6px;}
-.dot{width:7px; height:7px; border-radius:50%; background:var(--bull); animation:pulse 1.6s infinite;}
-@keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.3;}}
+body{margin:0;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);background:radial-gradient(1100px 480px at 85% -12%,color-mix(in srgb,var(--bull) 14%,transparent),transparent 60%),radial-gradient(900px 420px at -5% 10%,color-mix(in srgb,var(--bear) 10%,transparent),transparent 55%),var(--bg)}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;background-image:linear-gradient(color-mix(in srgb,var(--border) 60%,transparent) 1px,transparent 1px),linear-gradient(90deg,color-mix(in srgb,var(--border) 60%,transparent) 1px,transparent 1px);background-size:34px 34px;mask-image:linear-gradient(to bottom,black,transparent 70%)}
+body::after{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:color-mix(in srgb,var(--surface) 90%,transparent)}
+header{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top,0px))}
+.hrow{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+header h1{margin:0 0 2px;font-size:17px;font-weight:800;display:flex;align-items:center;gap:8px;letter-spacing:-.2px}
+header h1 .bull{color:var(--bull)}header h1 .bear{color:var(--bear)}
+header p{margin:0;font-size:12px;color:var(--sub)}
+.navtabs{display:flex;gap:6px}
+.navtab{padding:8px 14px;border-radius:999px;border:1px solid var(--border);background:var(--surface2);color:var(--sub);font-size:12.5px;font-weight:700;cursor:pointer;transition:all .15s ease}
+.navtab:hover{color:var(--text);border-color:color-mix(in srgb,var(--bull) 50%,var(--border))}
+.navtab.active{background:linear-gradient(135deg,var(--bull),color-mix(in srgb,var(--bull) 70%,var(--bear)));color:#06140a;border-color:transparent}
+.wrap{max-width:900px;margin:0 auto;padding:20px 18px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:16px;box-shadow:var(--shadow);animation:fadein .25s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.card h2{font-size:15.5px;margin:0 0 4px;font-weight:800;display:flex;align-items:center;gap:7px}
+.card .desc{font-size:12.5px;color:var(--sub);margin:0 0 14px;line-height:1.6}
+label{font-size:12px;color:var(--sub);font-weight:700;display:block;margin-bottom:6px}
+input[type=text]{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:10px 12px;font-size:13.5px;width:100%}
+input[type=text]:focus{outline:none;border-color:var(--bull);box-shadow:0 0 0 3px color-mix(in srgb,var(--bull) 20%,transparent)}
+.field{margin-bottom:14px}
+.weekpick{display:flex;gap:8px;margin-bottom:14px}
+.weekbtn{flex:1;padding:12px 8px;border-radius:11px;border:1.5px solid var(--border);background:var(--surface2);color:var(--text);font-size:13px;font-weight:800;cursor:pointer;text-align:center;transition:all .15s ease}
+.weekbtn:hover{border-color:color-mix(in srgb,var(--bull) 60%,var(--border))}
+.weekbtn.active{background:linear-gradient(135deg,color-mix(in srgb,var(--bull) 85%,black),var(--bull));border-color:var(--bull);color:#06140a;box-shadow:0 6px 16px -6px color-mix(in srgb,var(--bull) 70%,transparent)}
+.dropzone{border:2px dashed var(--border);border-radius:13px;padding:30px 16px;text-align:center;cursor:pointer;transition:all .15s ease;background:var(--surface2)}
+.dropzone:hover,.dropzone.drag{border-color:var(--bull);background:color-mix(in srgb,var(--bull) 8%,var(--surface2))}
+.dropzone .big{font-size:30px;margin-bottom:6px}
+.dropzone .sub{font-size:12px;color:var(--sub);margin-top:4px}
+#fileInput{display:none}
+.btn{background:linear-gradient(135deg,var(--bull),color-mix(in srgb,var(--bull) 65%,black));color:#06140a;border:none;border-radius:10px;padding:11px 20px;font-size:13.5px;font-weight:800;cursor:pointer;transition:transform .12s ease,opacity .15s;box-shadow:0 8px 18px -8px color-mix(in srgb,var(--bull) 70%,transparent)}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.btn.secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);box-shadow:none}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--border)}
+th{color:var(--sub);font-weight:800;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;font-size:13.5px;margin:12px 0}
+.kv div b{display:block;font-size:11px;color:var(--sub);font-weight:700}
+.bull-txt{color:var(--bull);font-weight:800}.bear-txt{color:var(--bear);font-weight:800}
+.status{font-size:12.5px;margin-top:10px;padding:10px 13px;border-radius:9px;display:none}
+.status.show{display:block}
+.status.ok{background:var(--bull-soft);color:var(--bull)}
+.status.err{background:var(--bear-soft);color:var(--bear)}
+.status.loading{background:var(--surface2);color:var(--sub)}
+.hist-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:12.5px}
+.hist-row:last-child{border-bottom:none}
+.hist-row .t{color:var(--sub);font-size:11.5px}
+.scrollx{overflow-x:auto}
+.footer-note{font-size:11.5px;color:var(--sub);margin-top:10px;line-height:1.6}
+.actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+.lb-row{display:flex;align-items:center;gap:12px;padding:12px;border-radius:12px;margin-bottom:8px;background:var(--surface2);border:1px solid var(--border);transition:transform .12s ease;cursor:pointer}
+.lb-row:hover{transform:translateX(2px)}
+.lb-row.open{margin-bottom:0;border-bottom-left-radius:0;border-bottom-right-radius:0}
+.lb-row.r1{background:linear-gradient(90deg,color-mix(in srgb,var(--gold) 16%,var(--surface2)),var(--surface2));border-color:color-mix(in srgb,var(--gold) 50%,var(--border))}
+.lb-row.r2{background:linear-gradient(90deg,color-mix(in srgb,var(--silver) 14%,var(--surface2)),var(--surface2))}
+.lb-row.r3{background:linear-gradient(90deg,color-mix(in srgb,var(--bronze) 16%,var(--surface2)),var(--surface2))}
+.lb-rank{width:34px;height:34px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;flex-shrink:0}
+.lb-rank.medal{font-size:18px;background:transparent;border:none}
+.lb-main{flex:1;min-width:0}
+.lb-name{font-weight:800;font-size:13.5px}
+.lb-weeks{font-size:11px;color:var(--sub);margin-top:2px;display:flex;gap:10px;flex-wrap:wrap}
+.lb-pct{font-weight:800;font-size:15px;text-align:right;min-width:72px}
+.lb-score{font-size:10.5px;color:var(--sub);text-align:right}
+.chev{color:var(--sub);font-size:11px;transition:transform .15s}.lb-row.open .chev{transform:rotate(90deg)}
+.sparkbar{display:flex;gap:3px;align-items:flex-end;height:22px;margin-top:4px}
+.sparkbar .bar{width:6px;border-radius:2px;background:var(--border)}
+.sparkbar .bar.filled{background:var(--bull)}
+.refresh-indicator{font-size:11px;color:var(--sub);display:flex;align-items:center;gap:6px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--bull);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.lb-detail{background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;padding:14px;margin-bottom:8px;animation:fadein .2s ease}
+.lb-detail h3{font-size:12px;color:var(--sub);text-transform:uppercase;letter-spacing:.05em;margin:16px 0 6px}
+.lb-detail h3:first-child{margin-top:0}
+.chartbox{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:8px}
+.chartbox svg{width:100%;height:auto;display:block}
+.chartbox .ct{font-size:11.5px;color:var(--sub);padding:2px 6px 6px}
 </style>
 </head>
 <body>
@@ -156,15 +104,11 @@ details summary{cursor:pointer; font-size:12.5px; color:var(--sub); font-weight:
     </div>
   </div>
 </header>
-
 <div class="wrap">
-
-  <!-- ===== UPLOAD VIEW ===== -->
   <div id="view-upload">
     <div class="card">
       <h2>📤 Upload Snapshot Portfolio</h2>
       <p class="desc">Export portfolio dari IDX Mobile (format Excel), pilih minggu keberapa, lalu upload file <b>.xlsx</b>-nya.</p>
-
       <div class="field">
         <label>Minggu Ke-</label>
         <div class="weekpick" id="weekPick">
@@ -173,12 +117,10 @@ details summary{cursor:pointer; font-size:12.5px; color:var(--sub); font-weight:
           <button class="weekbtn" data-w="3">Minggu 3</button>
         </div>
       </div>
-
       <div class="field">
         <label>Nama Kelompok</label>
         <input type="text" id="kelompokInput" placeholder="contoh: Grup 03">
       </div>
-
       <div class="dropzone" id="dropzone">
         <div class="big">📄</div>
         <div><b>Klik untuk pilih file</b> atau drag &amp; drop di sini</div>
@@ -187,11 +129,11 @@ details summary{cursor:pointer; font-size:12.5px; color:var(--sub); font-weight:
       </div>
       <div class="status" id="parseStatus"></div>
     </div>
-
     <div class="card" id="previewCard" style="display:none">
       <h2>✅ Preview Data</h2>
       <p class="desc">Cek dulu datanya sebelum dikirim.</p>
       <div class="kv" id="previewKv"></div>
+      <div class="chartbox" id="previewChart" style="margin-bottom:14px"></div>
       <div class="scrollx">
         <table id="holdingsTable"><thead><tr><th>Saham</th><th>Lot</th><th>Avg Price</th><th>Last Price</th><th>Unrealized</th></tr></thead><tbody></tbody></table>
       </div>
@@ -202,246 +144,227 @@ details summary{cursor:pointer; font-size:12.5px; color:var(--sub); font-weight:
       <div class="status" id="submitStatus"></div>
     </div>
   </div>
-
-  <!-- ===== LEADERBOARD VIEW ===== -->
   <div id="view-board" style="display:none">
     <div class="card">
       <h2>🏆 Leaderboard P&amp;L Antar Kelompok</h2>
-      <p class="desc">
-        Nilai P&amp;L = (N − peringkat) ÷ (N − 1) × 100, berdasarkan pertumbuhan Total Asset dari modal awal Rp5.000.000 ke minggu terbaru yang sudah diupload tiap kelompok. Update otomatis tiap ada upload baru.
-      </p>
+      <p class="desc">Nilai P&amp;L = (N − peringkat) ÷ (N − 1) × 100, berdasarkan pertumbuhan Total Asset dari modal awal Rp5.000.000 ke minggu terbaru yang sudah diupload tiap kelompok. <b>Klik kelompok</b> untuk melihat grafik dan rincian portofolionya.</p>
       <div class="refresh-indicator" style="margin-bottom:12px;"><span class="dot"></span><span id="refreshLabel">Live — menyesuaikan otomatis</span></div>
       <div id="boardList"><p class="footer-note">Memuat data…</p></div>
     </div>
   </div>
-
-  <!-- ===== HISTORY VIEW ===== -->
   <div id="view-history" style="display:none">
     <div class="card">
       <h2>📜 Riwayat Upload Saya</h2>
       <p class="desc">Masukkan Client ID kamu (terlihat di snapshot IDX Mobile) untuk lihat riwayat upload per minggu.</p>
-      <div class="field" style="display:flex; gap:8px; align-items:flex-end;">
+      <div class="field" style="display:flex;gap:8px;align-items:flex-end;">
         <div style="flex:1"><label>Client ID</label><input type="text" id="clientIdLookup" placeholder="X018871166"></div>
         <button class="btn secondary" id="lookupBtn">Cari</button>
       </div>
       <div id="historyList"></div>
     </div>
   </div>
-
 </div>
-
 <script>
-// ====== KONFIGURASI ======
-// Diisi langsung di sini (hardcoded) karena Setup UI sudah dihapus dari halaman.
-// Edit baris di bawah ini manual kalau ganti Apps Script.
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbwsF2BoxaCo5MaqN3tD5Rw32lww_DIOmRq8seaxJjmJT0TzamUQbMthZtXnp0pbz90X_A/exec";
-const MODAL_AWAL = 5000000; // basis perhitungan % P&L leaderboard (Rp)
-// ===========================================================
+const MODAL_AWAL = 5000000;
 
-let parsedData = null;
-let selectedWeek = null;
-let pollTimer = null;
+let parsedData = null, selectedWeek = null, pollTimer = null, chartN = 0;
+let boardGroups = {}, openGroups = {}, lastRows = [];
 
-function fmtRp(v){ return "Rp" + Number(v||0).toLocaleString("id-ID"); }
-function setStatus(id, txt, cls){
-  const el = document.getElementById(id);
-  el.textContent = txt;
-  el.className = "status show " + (cls||"");
+const fmtRp = v => "Rp" + Number(v||0).toLocaleString("id-ID");
+const fmtJt = v => (v/1e6).toFixed(2).replace(".",",") + "jt";
+const fmtPct = p => (p>=0?"▲ ":"▼ ") + (Math.abs(p)*100).toFixed(2) + "%";
+const esc = s => String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pick = (r, ks) => { for(const k of ks){ if(r && r[k]!==undefined && r[k]!=="") return r[k]; } return null; };
+function setStatus(id, txt, cls){ const el=document.getElementById(id); el.textContent=txt; el.className="status show "+(cls||""); }
+function hideStatus(id){ document.getElementById(id).className="status"; }
+
+// ---- Grafik portfolio (SVG): garis nilai portfolio vs garis modal awal Rp5jt, hijau = profit, merah = minus ----
+function chartSVG(pts){
+  const W=600,H=230,L=16,R=16,T=28,B=34, n=++chartN;
+  const vals = pts.map(p=>p.v).concat(MODAL_AWAL);
+  let mn=Math.min(...vals), mx=Math.max(...vals);
+  const pad=((mx-mn)||MODAL_AWAL*0.02)*0.3; mn-=pad; mx+=pad;
+  const x = i => pts.length>1 ? L+(W-L-R)*i/(pts.length-1) : W/2;
+  const y = v => T+(H-T-B)*(1-(v-mn)/(mx-mn));
+  const by = y(MODAL_AWAL);
+  const line = pts.map((p,i)=>x(i).toFixed(1)+","+y(p.v).toFixed(1)).join(" ");
+  const poly = line+" "+x(pts.length-1).toFixed(1)+","+by.toFixed(1)+" "+x(0).toFixed(1)+","+by.toFixed(1);
+  const last = pts[pts.length-1].v;
+  const lc = last>=MODAL_AWAL ? "var(--bull)" : "var(--bear)";
+  const dots = pts.map((p,i)=>{
+    const c = p.v>=MODAL_AWAL ? "var(--bull)" : "var(--bear)";
+    const ty = Math.max(14, y(p.v)-9);
+    return `<circle cx="${x(i).toFixed(1)}" cy="${y(p.v).toFixed(1)}" r="4.5" style="fill:${c};stroke:var(--surface2)" stroke-width="2"/>
+      <text x="${x(i).toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="middle" font-size="11" font-weight="700" style="fill:var(--text)">${fmtJt(p.v)}</text>
+      <text x="${x(i).toFixed(1)}" y="${H-12}" text-anchor="middle" font-size="11" style="fill:var(--sub)">${esc(p.label)}</text>`;
+  }).join("");
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Grafik portfolio terhadap modal awal">
+    <defs><clipPath id="up${n}"><rect x="0" y="0" width="${W}" height="${by.toFixed(1)}"/></clipPath><clipPath id="dn${n}"><rect x="0" y="${by.toFixed(1)}" width="${W}" height="${(H-by).toFixed(1)}"/></clipPath></defs>
+    <polygon points="${poly}" clip-path="url(#up${n})" style="fill:var(--bull);opacity:.2"/>
+    <polygon points="${poly}" clip-path="url(#dn${n})" style="fill:var(--bear);opacity:.2"/>
+    <line x1="${L}" x2="${W-R}" y1="${by.toFixed(1)}" y2="${by.toFixed(1)}" stroke-dasharray="5 4" style="stroke:var(--sub)" stroke-width="1"/>
+    <text x="${L+2}" y="${(by-5).toFixed(1)}" font-size="10" style="fill:var(--sub)">Modal Rp5.000.000</text>
+    ${pts.length>1?`<polyline points="${line}" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" style="stroke:${lc}"/>`:""}
+    ${dots}</svg>`;
 }
-function hideStatus(id){ document.getElementById(id).className = "status"; }
+function chartHTML(weeks, title){
+  // weeks: {"1":totalAsset,...}; titik awal = modal 5jt
+  const pts = [{label:"Awal", v:MODAL_AWAL}];
+  Object.keys(weeks).filter(w=>weeks[w]!==null && !isNaN(weeks[w])).sort((a,b)=>a-b).forEach(w=>pts.push({label:"M"+w, v:Number(weeks[w])}));
+  const last = pts[pts.length-1].v, pl = last-MODAL_AWAL;
+  return `<div class="ct">${esc(title||"Grafik Portfolio")} · <span class="${pl>=0?'bull-txt':'bear-txt'}">${pl>=0?"Profit ":"Minus "}${fmtRp(Math.abs(pl))} (${fmtPct(pl/MODAL_AWAL)})</span></div>` + chartSVG(pts);
+}
 
 // ---- Nav tabs ----
 document.querySelectorAll(".navtab").forEach(t=>{
   t.addEventListener("click", ()=>{
     document.querySelectorAll(".navtab").forEach(x=>x.classList.remove("active"));
     t.classList.add("active");
-    ["upload","board","history"].forEach(v=>{
-      document.getElementById("view-"+v).style.display = (v===t.dataset.view) ? "" : "none";
-    });
+    ["upload","board","history"].forEach(v=>{ document.getElementById("view-"+v).style.display = (v===t.dataset.view) ? "" : "none"; });
     if(t.dataset.view==="board"){ loadBoard(); startPolling(); } else { stopPolling(); }
   });
 });
-
-// ---- Week picker ----
 document.querySelectorAll(".weekbtn").forEach(b=>{
   b.addEventListener("click", ()=>{
     document.querySelectorAll(".weekbtn").forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    selectedWeek = b.dataset.w;
+    b.classList.add("active"); selectedWeek = b.dataset.w;
+    if(parsedData) updatePreviewChart();
   });
 });
 
 // ---- Drop zone ----
-const dropzone = document.getElementById("dropzone");
-const fileInput = document.getElementById("fileInput");
+const dropzone = document.getElementById("dropzone"), fileInput = document.getElementById("fileInput");
 dropzone.addEventListener("click", ()=> fileInput.click());
 dropzone.addEventListener("dragover", e=>{ e.preventDefault(); dropzone.classList.add("drag"); });
 dropzone.addEventListener("dragleave", ()=> dropzone.classList.remove("drag"));
-dropzone.addEventListener("drop", e=>{
-  e.preventDefault(); dropzone.classList.remove("drag");
-  if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-});
+dropzone.addEventListener("drop", e=>{ e.preventDefault(); dropzone.classList.remove("drag"); if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
 fileInput.addEventListener("change", e=>{ if(e.target.files.length) handleFile(e.target.files[0]); });
+document.getElementById("kelompokInput").addEventListener("change", ()=>{ if(parsedData) updatePreviewChart(); });
 
 function handleFile(file){
-  if(!selectedWeek){
-    setStatus("parseStatus", "Pilih dulu minggu ke berapa di atas, ya.", "err");
-    return;
-  }
-  if(!file.name.toLowerCase().endsWith(".xlsx")){
-    setStatus("parseStatus", "File harus berformat .xlsx (export dari IDX Mobile).", "err");
-    return;
-  }
-  setStatus("parseStatus", "Membaca file…", "loading");
+  if(!selectedWeek){ setStatus("parseStatus","Pilih dulu minggu ke berapa di atas, ya.","err"); return; }
+  if(!file.name.toLowerCase().endsWith(".xlsx")){ setStatus("parseStatus","File harus berformat .xlsx (export dari IDX Mobile).","err"); return; }
+  setStatus("parseStatus","Membaca file…","loading");
   const reader = new FileReader();
   reader.onload = e=>{
     try{
       const wb = XLSX.read(e.target.result, {type:"array"});
       const data = parseWorkbook(wb);
-      if(!data){
-        setStatus("parseStatus", "Format file tidak dikenali. Pastikan ini file export asli dari IDX Mobile.", "err");
-        return;
-      }
+      if(!data){ setStatus("parseStatus","Format file tidak dikenali. Pastikan ini file export asli dari IDX Mobile.","err"); return; }
       parsedData = data;
-      setStatus("parseStatus", "✓ File berhasil dibaca: " + file.name, "ok");
+      setStatus("parseStatus","✓ File berhasil dibaca: "+file.name,"ok");
       showPreview(data);
-    }catch(err){
-      setStatus("parseStatus", "Gagal membaca file: " + err.message, "err");
-    }
+    }catch(err){ setStatus("parseStatus","Gagal membaca file: "+err.message,"err"); }
   };
   reader.readAsArrayBuffer(file);
 }
 
 function sheetToObj(ws, headerRowIdx, dataRowIdx){
   const rows = XLSX.utils.sheet_to_json(ws, {header:1, defval:""});
-  const headers = rows[headerRowIdx] || [];
-  const dataRow = rows[dataRowIdx] || [];
-  const obj = {};
+  const headers = rows[headerRowIdx] || [], dataRow = rows[dataRowIdx] || [], obj = {};
   headers.forEach((h,i)=>{ if(h) obj[h] = dataRow[i]; });
   return obj;
 }
-
 function parseWorkbook(wb){
   const names = wb.SheetNames;
   if(!names.includes("Portfolio")) return null;
   const rows = XLSX.utils.sheet_to_json(wb.Sheets["Portfolio"], {header:1, defval:""});
   let profileHeaderRow=-1, equityHeaderRow=-1;
-  rows.forEach((r,i)=>{
-    if(r[0]==="Name" && r[1]==="Email") profileHeaderRow = i;
-    if(r[0]==="Cash" && r[1]==="Buy") equityHeaderRow = i;
-  });
+  rows.forEach((r,i)=>{ if(r[0]==="Name" && r[1]==="Email") profileHeaderRow=i; if(r[0]==="Cash" && r[1]==="Buy") equityHeaderRow=i; });
   if(profileHeaderRow===-1 || equityHeaderRow===-1) return null;
-
   const profile = sheetToObj(wb.Sheets["Portfolio"], profileHeaderRow, profileHeaderRow+1);
   const equity = sheetToObj(wb.Sheets["Portfolio"], equityHeaderRow, equityHeaderRow+1);
-
   let holdings = [];
   if(names.includes("Equity")) holdings = XLSX.utils.sheet_to_json(wb.Sheets["Equity"], {defval:""});
-
   let snapshotTime = "";
   if(rows[1] && rows[1][0]) snapshotTime = String(rows[1][0]);
-
   return {
-    name: profile["Name"] || "", email: profile["Email"] || "", clientId: profile["Client ID"] || "",
-    cash: equity["Cash"], buy: equity["Buy"], sell: equity["Sell"],
-    bid: equity["Bid"], offer: equity["Offer"], netCash: equity["Net Cash"],
-    stockValue: equity["Stock Value"], marketValue: equity["Market Value"],
-    totalAsset: equity["Total Asset"], unrealized: equity["Unrealized"],
-    unrealizedPct: equity["Unrealized (%)"], totalLimit: equity["Total Limit"],
-    profitLoss: equity["Profit Loss"],
-    holdings: holdings.map(h=>({
-      stock: h["Stock"], lastPrice: h["Last Price"], changePct: h["Change (%)"],
-      lot: h["Balance (Lot)"], marketValue: h["Market Value"], avgPrice: h["Avg Price"],
-      value: h["Value"], unrealized: h["Unrealized"], unrealizedPct: h["Unrealized (%)"]
-    })),
+    name: profile["Name"]||"", email: profile["Email"]||"", clientId: profile["Client ID"]||"",
+    cash: equity["Cash"], buy: equity["Buy"], sell: equity["Sell"], bid: equity["Bid"], offer: equity["Offer"],
+    netCash: equity["Net Cash"], stockValue: equity["Stock Value"], marketValue: equity["Market Value"],
+    totalAsset: equity["Total Asset"], unrealized: equity["Unrealized"], unrealizedPct: equity["Unrealized (%)"],
+    totalLimit: equity["Total Limit"], profitLoss: equity["Profit Loss"],
+    holdings: holdings.map(h=>({stock:h["Stock"], lastPrice:h["Last Price"], changePct:h["Change (%)"], lot:h["Balance (Lot)"], marketValue:h["Market Value"], avgPrice:h["Avg Price"], value:h["Value"], unrealized:h["Unrealized"], unrealizedPct:h["Unrealized (%)"]})),
     snapshotTime
   };
 }
 
 function showPreview(data){
   document.getElementById("previewCard").style.display = "";
-  const kv = document.getElementById("previewKv");
-  kv.innerHTML = `
-    <div><b>Nama</b>${data.name}</div>
-    <div><b>Client ID</b>${data.clientId}</div>
+  document.getElementById("previewKv").innerHTML = `
+    <div><b>Nama</b>${esc(data.name)}</div>
+    <div><b>Client ID</b>${esc(data.clientId)}</div>
     <div><b>Total Asset</b>${fmtRp(data.totalAsset)}</div>
     <div><b>Net Cash</b>${fmtRp(data.netCash)}</div>
     <div><b>Market Value</b>${fmtRp(data.marketValue)}</div>
     <div><b>Profit/Loss</b><span class="${Number(data.profitLoss)>=0?'bull-txt':'bear-txt'}">${fmtRp(data.profitLoss)}</span></div>
     <div><b>Unrealized</b><span class="${Number(data.unrealized)>=0?'bull-txt':'bear-txt'}">${fmtRp(data.unrealized)} (${Number(data.unrealizedPct||0).toFixed(2)}%)</span></div>
-    <div><b>Waktu Snapshot</b>${data.snapshotTime||"-"}</div>
-  `;
-  const tbody = document.querySelector("#holdingsTable tbody");
-  tbody.innerHTML = data.holdings.map(h=>`
-    <tr><td>${h.stock}</td><td>${h.lot}</td><td>${fmtRp(h.avgPrice)}</td><td>${fmtRp(h.lastPrice)}</td>
-    <td class="${Number(h.unrealized)>=0?'bull-txt':'bear-txt'}">${fmtRp(h.unrealized)}</td></tr>
-  `).join("") || `<tr><td colspan="5" style="color:var(--sub)">Tidak ada posisi saham</td></tr>`;
+    <div><b>Waktu Snapshot</b>${esc(data.snapshotTime||"-")}</div>`;
+  document.querySelector("#holdingsTable tbody").innerHTML = data.holdings.map(h=>`
+    <tr><td>${esc(h.stock)}</td><td>${esc(h.lot)}</td><td>${fmtRp(h.avgPrice)}</td><td>${fmtRp(h.lastPrice)}</td>
+    <td class="${Number(h.unrealized)>=0?'bull-txt':'bear-txt'}">${fmtRp(h.unrealized)}</td></tr>`).join("") || `<tr><td colspan="5" style="color:var(--sub)">Tidak ada posisi saham</td></tr>`;
   hideStatus("submitStatus");
+  updatePreviewChart();
+}
+
+// Grafik otomatis saat upload: minggu-minggu sebelumnya diambil dari data kelompok yang sama, minggu ini dari file yang baru diupload
+function updatePreviewChart(){
+  const box = document.getElementById("previewChart");
+  if(!parsedData) return;
+  const kel = document.getElementById("kelompokInput").value.trim().toLowerCase();
+  const draw = rows=>{
+    const weeks = {};
+    if(kel){
+      (rows||[]).filter(r=>String(r.Kelompok||"").trim().toLowerCase()===kel).forEach(r=>{
+        const w = String(r.Minggu||"").trim(); if(!w) return;
+        if(!weeks[w] || new Date(r.Timestamp) > new Date(weeks[w].t)) weeks[w] = {t:r.Timestamp, v:Number(r.TotalAsset)};
+      });
+    }
+    const flat = {}; Object.keys(weeks).forEach(w=> flat[w]=weeks[w].v);
+    flat[selectedWeek] = Number(parsedData.totalAsset);
+    box.innerHTML = chartHTML(flat, "Portfolio "+(document.getElementById("kelompokInput").value.trim()||parsedData.name||"")+" (termasuk file ini)");
+  };
+  draw(lastRows);
+  if(SHEET_URL && kel){ fetch(SHEET_URL).then(r=>r.json()).then(res=>{ if(res.ok){ lastRows = res.rows||[]; draw(lastRows); } }).catch(()=>{}); }
 }
 
 document.getElementById("cancelBtn").addEventListener("click", ()=>{
-  parsedData = null;
-  document.getElementById("previewCard").style.display = "none";
-  fileInput.value = "";
-  hideStatus("parseStatus");
+  parsedData = null; document.getElementById("previewCard").style.display = "none"; fileInput.value = ""; hideStatus("parseStatus");
 });
-
 document.getElementById("submitBtn").addEventListener("click", ()=>{
   if(!parsedData) return;
-  if(!SHEET_URL){
-    setStatus("submitStatus", "URL Google Apps Script belum di-setup di kode.", "err");
-    return;
-  }
-  const payload = Object.assign({}, parsedData, {
-    kelompok: document.getElementById("kelompokInput").value.trim(),
-    minggu: selectedWeek
-  });
-  setStatus("submitStatus", "Mengirim data…", "loading");
+  if(!SHEET_URL){ setStatus("submitStatus","URL Google Apps Script belum di-setup di kode.","err"); return; }
+  // holdingsJson: ringkasan posisi saham supaya bisa ditampilkan di rincian leaderboard (butuh kolom HoldingsJson di Apps Script)
+  const holdingsJson = JSON.stringify(parsedData.holdings.map(h=>({s:h.stock, l:h.lot, a:h.avgPrice, p:h.lastPrice, u:h.unrealized})));
+  const payload = Object.assign({}, parsedData, { kelompok: document.getElementById("kelompokInput").value.trim(), minggu: selectedWeek, holdingsJson });
+  setStatus("submitStatus","Mengirim data…","loading");
   document.getElementById("submitBtn").disabled = true;
-  fetch(SHEET_URL, {
-    method:"POST",
-    headers:{"Content-Type":"text/plain;charset=utf-8"},
-    body: JSON.stringify(payload)
-  }).then(r=>r.json()).then(r=>{
-    document.getElementById("submitBtn").disabled = false;
-    if(r.ok){
-      setStatus("submitStatus", "✓ Berhasil terkirim ke panitia!", "ok");
-      document.getElementById("clientIdLookup").value = parsedData.clientId;
-    }else{
-      setStatus("submitStatus", "Gagal: " + (r.error||"unknown error"), "err");
-    }
-  }).catch(err=>{
-    document.getElementById("submitBtn").disabled = false;
-    setStatus("submitStatus", "Gagal mengirim (cek koneksi / URL Apps Script): " + err.message, "err");
-  });
+  fetch(SHEET_URL, {method:"POST", headers:{"Content-Type":"text/plain;charset=utf-8"}, body: JSON.stringify(payload)})
+    .then(r=>r.json()).then(r=>{
+      document.getElementById("submitBtn").disabled = false;
+      if(r.ok){ setStatus("submitStatus","✓ Berhasil terkirim ke panitia!","ok"); document.getElementById("clientIdLookup").value = parsedData.clientId; }
+      else setStatus("submitStatus","Gagal: "+(r.error||"unknown error"),"err");
+    }).catch(err=>{
+      document.getElementById("submitBtn").disabled = false;
+      setStatus("submitStatus","Gagal mengirim (cek koneksi / URL Apps Script): "+err.message,"err");
+    });
 });
 
 // ---- Riwayat ----
-document.getElementById("lookupBtn").addEventListener("click", ()=>{
-  const cid = document.getElementById("clientIdLookup").value.trim();
-  if(cid) loadHistory(cid);
-});
-
+document.getElementById("lookupBtn").addEventListener("click", ()=>{ const cid=document.getElementById("clientIdLookup").value.trim(); if(cid) loadHistory(cid); });
 function loadHistory(clientId){
   const box = document.getElementById("historyList");
   if(!SHEET_URL){ box.innerHTML = `<p class="footer-note">URL Apps Script belum di-setup.</p>`; return; }
   box.innerHTML = `<p class="footer-note">Memuat riwayat…</p>`;
-  fetch(SHEET_URL + "?clientId=" + encodeURIComponent(clientId))
-    .then(r=>r.json()).then(res=>{
-      if(!res.ok || !res.rows || !res.rows.length){
-        box.innerHTML = `<p class="footer-note">Belum ada riwayat upload untuk Client ID ini.</p>`;
-        return;
-      }
-      box.innerHTML = res.rows.map(r=>`
-        <div class="hist-row">
-          <div>
-            <div><b>Minggu ${r.Minggu||"?"}</b> — ${fmtRp(r.TotalAsset)} · ${r.Kelompok||"-"}</div>
-            <div class="t">${new Date(r.Timestamp).toLocaleString("id-ID")}</div>
-          </div>
-          <div class="${Number(r.ProfitLoss)>=0?'bull-txt':'bear-txt'}">${fmtRp(r.ProfitLoss)}</div>
-        </div>
-      `).join("");
-    }).catch(()=>{ box.innerHTML = `<p class="footer-note">Gagal memuat riwayat.</p>`; });
+  fetch(SHEET_URL+"?clientId="+encodeURIComponent(clientId)).then(r=>r.json()).then(res=>{
+    if(!res.ok || !res.rows || !res.rows.length){ box.innerHTML = `<p class="footer-note">Belum ada riwayat upload untuk Client ID ini.</p>`; return; }
+    box.innerHTML = res.rows.map(r=>`
+      <div class="hist-row"><div>
+        <div><b>Minggu ${esc(r.Minggu||"?")}</b> — ${fmtRp(r.TotalAsset)} · ${esc(r.Kelompok||"-")}</div>
+        <div class="t">${new Date(r.Timestamp).toLocaleString("id-ID")}</div></div>
+        <div class="${Number(r.ProfitLoss)>=0?'bull-txt':'bear-txt'}">${fmtRp(r.ProfitLoss)}</div></div>`).join("");
+  }).catch(()=>{ box.innerHTML = `<p class="footer-note">Gagal memuat riwayat.</p>`; });
 }
 
 // ---- Leaderboard ----
@@ -449,82 +372,88 @@ function loadBoard(){
   const box = document.getElementById("boardList");
   if(!SHEET_URL){ box.innerHTML = `<p class="footer-note">URL Apps Script belum di-setup di kode.</p>`; return; }
   fetch(SHEET_URL).then(r=>r.json()).then(res=>{
-    if(!res.ok || !res.rows || !res.rows.length){
-      box.innerHTML = `<p class="footer-note">Belum ada data yang diupload.</p>`;
-      return;
-    }
-    renderBoard(res.rows);
+    if(!res.ok || !res.rows || !res.rows.length){ box.innerHTML = `<p class="footer-note">Belum ada data yang diupload.</p>`; return; }
+    lastRows = res.rows; renderBoard(res.rows);
   }).catch(()=>{ box.innerHTML = `<p class="footer-note">Gagal memuat leaderboard.</p>`; });
 }
 
+// Rincian satu kelompok: ringkasan, grafik, tabel per minggu, dan posisi saham (bila HoldingsJson tersedia)
+function detailHTML(name){
+  const weeks = boardGroups[name] || {};
+  const ws = Object.keys(weeks).sort((a,b)=>a-b);
+  const flat = {}; ws.forEach(w=> flat[w]=Number(weeks[w].TotalAsset));
+  const lastR = weeks[ws[ws.length-1]];
+  const latest = Number(lastR.TotalAsset), pl = latest-MODAL_AWAL;
+  const extra = [["Net Cash",["NetCash","Net Cash"]],["Market Value",["MarketValue","Market Value"]],["Unrealized",["Unrealized"]]]
+    .map(([lab,ks])=>{ const v=pick(lastR,ks); return v===null?"":`<div><b>${lab}</b>${fmtRp(v)}</div>`; }).join("");
+  const rowsW = ws.map((w,i)=>{
+    const v=flat[w], prev = i? flat[ws[i-1]] : MODAL_AWAL, d=v-MODAL_AWAL, dw=v-prev;
+    return `<tr><td>Minggu ${esc(w)}</td><td>${fmtRp(v)}</td><td class="${d>=0?'bull-txt':'bear-txt'}">${d>=0?"+":"−"}${fmtRp(Math.abs(d))} (${fmtPct(d/MODAL_AWAL)})</td><td class="${dw>=0?'bull-txt':'bear-txt'}">${dw>=0?"+":"−"}${fmtRp(Math.abs(dw))}</td></tr>`;
+  }).join("");
+  let hold = [];
+  try{ const hj = pick(lastR,["HoldingsJson","holdingsJson"]); if(hj) hold = JSON.parse(hj); }catch(e){}
+  const holdHTML = hold.length ? `<h3>Posisi saham (Minggu ${esc(ws[ws.length-1])})</h3><div class="scrollx"><table><thead><tr><th>Saham</th><th>Lot</th><th>Avg</th><th>Last</th><th>Unrealized</th></tr></thead><tbody>${hold.map(h=>`<tr><td>${esc(h.s)}</td><td>${esc(h.l)}</td><td>${fmtRp(h.a)}</td><td>${fmtRp(h.p)}</td><td class="${Number(h.u)>=0?'bull-txt':'bear-txt'}">${fmtRp(h.u)}</td></tr>`).join("")}</tbody></table></div>`
+    : `<p class="footer-note">Rincian posisi saham belum tersedia untuk upload ini (kolom HoldingsJson belum tersimpan di Apps Script).</p>`;
+  return `<div class="kv"><div><b>Total Asset terbaru</b>${fmtRp(latest)}</div><div><b>Profit / Minus vs modal Rp5.000.000</b><span class="${pl>=0?'bull-txt':'bear-txt'}">${pl>=0?"+":"−"}${fmtRp(Math.abs(pl))} (${fmtPct(pl/MODAL_AWAL)})</span></div>${extra}</div>
+    <h3>Grafik portfolio</h3><div class="chartbox">${chartHTML(flat, esc(name))}</div>
+    <h3>Hasil per minggu</h3><div class="scrollx"><table><thead><tr><th>Minggu</th><th>Total Asset</th><th>vs Modal</th><th>vs Minggu Lalu</th></tr></thead><tbody>${rowsW}</tbody></table></div>${holdHTML}`;
+}
+
 function renderBoard(rows){
-  // Kelompokkan per nama kelompok, ambil submission TERBARU untuk tiap minggu
   const groups = {};
   rows.forEach(r=>{
     const name = (r.Kelompok || "(tanpa nama)").trim() || "(tanpa nama)";
-    const w = String(r.Minggu || "").trim();
-    if(!w) return;
+    const w = String(r.Minggu || "").trim(); if(!w) return;
     groups[name] = groups[name] || {};
-    const existing = groups[name][w];
-    if(!existing || new Date(r.Timestamp) > new Date(existing.Timestamp)){
-      groups[name][w] = r;
-    }
+    const ex = groups[name][w];
+    if(!ex || new Date(r.Timestamp) > new Date(ex.Timestamp)) groups[name][w] = r;
   });
-
+  boardGroups = groups;
   const entries = Object.keys(groups).map(name=>{
-    const weeks = groups[name];
-    const w1 = weeks["1"] ? Number(weeks["1"].TotalAsset) : null;
-    const w2 = weeks["2"] ? Number(weeks["2"].TotalAsset) : null;
-    const w3 = weeks["3"] ? Number(weeks["3"].TotalAsset) : null;
-    const baseline = MODAL_AWAL;
+    const wk = groups[name], g = k => wk[k] ? Number(wk[k].TotalAsset) : null;
+    const w1=g("1"), w2=g("2"), w3=g("3");
     const latest = w3!==null ? w3 : (w2!==null ? w2 : w1);
-    const latestLabel = w3!==null ? 3 : (w2!==null ? 2 : (w1!==null ? 1 : null));
-    const pct = (latest!==null) ? (latest-baseline)/baseline : null;
-    return {name, w1, w2, w3, latest, latestLabel, pct};
+    const pct = (latest!==null) ? (latest-MODAL_AWAL)/MODAL_AWAL : null;
+    return {name, w1, w2, w3, latest, pct};
   });
-
   const ranked = entries.filter(e=>e.pct!==null).sort((a,b)=>b.pct-a.pct);
   const N = ranked.length;
-  ranked.forEach((e,i)=>{ e.rank = i+1; e.score = N>1 ? (N-e.rank)/(N-1)*100 : 100; });
+  ranked.forEach((e,i)=>{ e.rank=i+1; e.score = N>1 ? (N-e.rank)/(N-1)*100 : 100; });
   const unranked = entries.filter(e=>e.pct===null);
-
-  const medals = ["🥇","🥈","🥉"];
-  const box = document.getElementById("boardList");
+  const medals = ["🥇","🥈","🥉"], box = document.getElementById("boardList");
   box.innerHTML = ranked.map((e,i)=>{
     const rcls = i===0?"r1":i===1?"r2":i===2?"r3":"";
+    const isOpen = !!openGroups[e.name];
     const rankDisp = medals[i] ? `<div class="lb-rank medal">${medals[i]}</div>` : `<div class="lb-rank">${e.rank}</div>`;
+    const mx = Math.max(e.w1||0, e.w2||0, e.w3||0, 1);
     const bars = [e.w1,e.w2,e.w3].map((v,idx)=>{
-      const h = v===null ? 6 : Math.max(6, Math.min(22, 6 + (v/(Math.max(e.w1||v,e.w2||v,e.w3||v,1)))*16));
-      return `<div class="bar ${v!==null?'filled':''}" style="height:${v!==null?h:6}px" title="Minggu ${idx+1}"></div>`;
+      const h = v===null ? 6 : Math.max(6, Math.min(22, 6 + (v/mx)*16));
+      return `<div class="bar ${v!==null?'filled':''}" style="height:${h}px" title="Minggu ${idx+1}"></div>`;
     }).join("");
     return `
-      <div class="lb-row ${rcls}">
+      <div class="lb-row ${rcls} ${isOpen?'open':''}" data-name="${esc(e.name)}">
         ${rankDisp}
         <div class="lb-main">
-          <div class="lb-name">${e.name}</div>
-          <div class="lb-weeks">
-            <span>M1: ${e.w1!==null?fmtRp(e.w1):"—"}</span>
-            <span>M2: ${e.w2!==null?fmtRp(e.w2):"—"}</span>
-            <span>M3: ${e.w3!==null?fmtRp(e.w3):"—"}</span>
-          </div>
+          <div class="lb-name">${esc(e.name)}</div>
+          <div class="lb-weeks"><span>M1: ${e.w1!==null?fmtRp(e.w1):"—"}</span><span>M2: ${e.w2!==null?fmtRp(e.w2):"—"}</span><span>M3: ${e.w3!==null?fmtRp(e.w3):"—"}</span></div>
           <div class="sparkbar">${bars}</div>
         </div>
         <div>
-          <div class="lb-pct ${e.pct>=0?'bull-txt':'bear-txt'}">${e.pct>=0?'▲':'▼'} ${(Math.abs(e.pct)*100).toFixed(2)}%</div>
+          <div class="lb-pct ${e.pct>=0?'bull-txt':'bear-txt'}">${fmtPct(e.pct)}</div>
           <div class="lb-score">Nilai P&amp;L: ${e.score.toFixed(1)}</div>
         </div>
-      </div>`;
-  }).join("") + (unranked.length ? `<p class="footer-note">Belum masuk ranking (baru 1 data poin / menunggu Minggu 1): ${unranked.map(e=>e.name).join(", ")}</p>` : "");
-
-  if(!ranked.length && !unranked.length){
-    box.innerHTML = `<p class="footer-note">Belum ada data yang bisa diranking.</p>`;
-  }
+        <span class="chev">▶</span>
+      </div>${isOpen ? `<div class="lb-detail">${detailHTML(e.name)}</div>` : ""}`;
+  }).join("") + (unranked.length ? `<p class="footer-note">Belum masuk ranking (menunggu Minggu 1): ${unranked.map(e=>esc(e.name)).join(", ")}</p>` : "");
+  if(!ranked.length && !unranked.length) box.innerHTML = `<p class="footer-note">Belum ada data yang bisa diranking.</p>`;
 }
+document.getElementById("boardList").addEventListener("click", e=>{
+  const row = e.target.closest(".lb-row"); if(!row) return;
+  const n = row.dataset.name; openGroups[n] = !openGroups[n];
+  renderBoard(lastRows);
+});
 
-function startPolling(){
-  stopPolling();
-  pollTimer = setInterval(loadBoard, 15000);
-}
+function startPolling(){ stopPolling(); pollTimer = setInterval(loadBoard, 15000); }
 function stopPolling(){ if(pollTimer) clearInterval(pollTimer); }
 </script>
 </body>
